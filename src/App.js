@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import React, { useState } from "react";
+import Card from "./components/Card";
+import Loading from "./components/Loading";
+import Show from "./components/Show";
 
-function App() {
+const App = () => {
+  const [loading, setLoading] = useState();
+  const [user, setUser] = useState([]);
+  const [show, setShow] = useState(true);
+
+  const fetchData = async () => {
+    setShow(false);
+    setLoading(true);
+    const { data } = await axios.get("https://reqres.in/api/users?page=1");
+    setUser(data.data);
+    setLoading(false);
+  };
+  console.log(user);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <nav className="navbar">
+        <h2>Assignment</h2>
+        <button onClick={fetchData}>Get Users</button>
+      </nav>
+      <main>
+        {show ? (
+          <Show />
+        ) : (
+          <div className="main">
+            {loading ? (
+              <Loading />
+            ) : (
+              <div className="cards">
+                {user.map((item) => (
+                  <Card key={item.id} item={item} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+    </>
   );
-}
+};
 
 export default App;
